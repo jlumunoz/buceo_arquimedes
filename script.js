@@ -10,12 +10,16 @@ const modalClose = document.querySelector("#modalClose");
 const modalTitle = document.querySelector("#modalTitle");
 const modalMeta = document.querySelector("#modalMeta");
 const modalFeatureImage = document.querySelector("#modalFeatureImage");
+const modalFeatureVideo = document.querySelector("#modalFeatureVideo");
 const modalFeatureCaption = document.querySelector("#modalFeatureCaption");
 const modalThumbs = document.querySelector("#modalThumbs");
+const modalPrev = document.querySelector("#modalPrev");
+const modalNext = document.querySelector("#modalNext");
 
 const GALLERY_ROOT = "assets/gallery/";
 const GALLERY_MANIFEST = `${GALLERY_ROOT}gallery.json`;
-const IMAGE_EXTENSIONS = /\.(avif|gif|jpe?g|png|webp)$/i;
+const VIDEO_EXTENSIONS = /\.(m4v|mov|mp4|ogg|webm)$/i;
+const MEDIA_EXTENSIONS = /\.(avif|gif|jpe?g|m4v|mov|mp4|ogg|png|webp|webm)$/i;
 const BASE_YEAR = 2026;
 const DEFAULT_COURSE_WEEKS = {
   "2026-02": "2026-02-16",
@@ -47,6 +51,8 @@ const today = startOfDay(new Date());
 let selectedYear = BASE_YEAR;
 const courseWeeks = { ...DEFAULT_COURSE_WEEKS };
 let galleryAlbums = [];
+let currentAlbumIndex = 0;
+let currentMediaIndex = 0;
 
 function startOfDay(date) {
   return new Date(date.getFullYear(), date.getMonth(), date.getDate());
@@ -209,7 +215,11 @@ function albumFolderUrl(folder) {
   return `${GALLERY_ROOT}${encodePathSegment(folder)}/`;
 }
 
-function imageUrl(folder, fileName) {
+function mediaUrl(folder, fileName) {
+  if (/^(https?:)?\/\//i.test(fileName) || fileName.startsWith("/")) {
+    return fileName;
+  }
+
   return `${albumFolderUrl(folder)}${encodePathSegment(fileName)}`;
 }
 
@@ -230,13 +240,66 @@ function formatAlbumTitle(folderName) {
     .replace(/\b\p{L}/gu, (letter) => letter.toUpperCase());
 }
 
-function formatPhotoCaption(fileName, index) {
+function formatMediaCaption(fileName, index) {
   const name = fileName
     .replace(/\.[^.]+$/, "")
     .replace(/[_-]+/g, " ")
     .replace(/\s+/g, " ")
     .trim();
   return name ? capitalizeFirst(name) : `Foto ${index + 1}`;
+}
+
+function formatMediaCount(media) {
+  const videos = media.filter((item) => item.type === "video").length;
+  const photos = media.length - videos;
+
+  if (videos && photos) {
+    return `${photos} ${photos === 1 ? "foto" : "fotos"} · ${videos} ${videos === 1 ? "vídeo" : "vídeos"}`;
+  }
+
+  if (videos) {
+    return `${videos} ${videos === 1 ? "vídeo" : "vídeos"}`;
+  }
+
+  return `${photos} ${photos === 1 ? "foto" : "fotos"}`;
+}
+
+function getMediaType(fileName, explicitType) {
+  if (explicitType === "video" || VIDEO_EXTENSIONS.test(fileName)) {
+    return "video";
+  }
+
+  return "image";
+}
+
+function joinAlbumPath(parentFolder, folder) {
+  return [parentFolder, folder].filter(Boolean).join("/");
+}
+
+function getEntryMedia(entry) {
+  return [
+    ...(entry.media || []),
+    ...(entry.photos || []),
+    ...(entry.videos || []),
+  ];
+}
+
+function normalizeMediaItem(item, folderName, index) {
+  const fileName = typeof item === "string" ? item : item.file || item.src || item.name;
+
+  if (!fileName || !MEDIA_EXTENSIONS.test(fileName)) {
+    return null;
+  }
+
+  const poster = typeof item === "string" ? "" : item.poster || "";
+
+  return {
+    caption: typeof item === "string" ? formatMediaCaption(fileName, index) : item.caption || formatMediaCaption(fileName, index),
+    fileName,
+    poster: poster ? mediaUrl(folderName, poster) : "",
+    src: mediaUrl(folderName, fileName),
+    type: getMediaType(fileName, typeof item === "string" ? "" : item.type),
+  };
 }
 
 async function fetchDirectory(path) {
@@ -247,16 +310,42 @@ async function fetchDirectory(path) {
   return response.text();
 }
 
-async function discoverAlbumPhotos(folderName) {
+async function discoverAlbumMedia(folderName) {
   const html = await fetchDirectory(albumFolderUrl(folderName));
   return parseDirectoryLinks(html)
     .filter((href) => !href.endsWith("/"))
-    .filter((href) => IMAGE_EXTENSIONS.test(href))
+    .filter((href) => MEDIA_EXTENSIONS.test(href))
     .map((fileName, index) => ({
-      caption: formatPhotoCaption(fileName, index),
+      caption: formatMediaCaption(fileName, index),
       fileName,
-      src: imageUrl(folderName, fileName),
+      poster: "",
+      src: mediaUrl(folderName, fileName),
+      type: getMediaType(fileName),
     }));
+}
+
+function flattenManifestEntries(entries, parentFolder = "", parentTitle = "") {
+  return entries.flatMap((entry) => {
+    const folderName = entry.folder || entry.folderName || "";
+    const fullFolder = joinAlbumPath(parentFolder, folderName);
+    const category = parentTitle || entry.category || "";
+    const media = getEntryMedia(entry)
+      .map((item, index) => normalizeMediaItem(item, fullFolder, index))
+      .filter(Boolean);
+    const nestedAlbums = flattenManifestEntries(entry.albums || entry.children || [], fullFolder, entry.title || formatAlbumTitle(folderName));
+    const albums = [];
+
+    if (fullFolder && media.length) {
+      albums.push({
+        category,
+        folderName: fullFolder,
+        media,
+        title: entry.title || formatAlbumTitle(folderName || fullFolder),
+      });
+    }
+
+    return albums.concat(nestedAlbums);
+  });
 }
 
 async function loadGalleryManifest() {
@@ -266,33 +355,7 @@ async function loadGalleryManifest() {
   }
 
   const albums = await response.json();
-
-  return albums
-    .map((album) => {
-      const folderName = album.folder || album.folderName;
-      const photos = Array.isArray(album.photos) ? album.photos : [];
-
-      if (!folderName) {
-        return {
-          folderName: "",
-          photos: [],
-          title: "",
-        };
-      }
-
-      return {
-        folderName,
-        photos: photos
-          .filter((fileName) => IMAGE_EXTENSIONS.test(fileName))
-          .map((fileName, index) => ({
-            caption: formatPhotoCaption(fileName, index),
-            fileName,
-            src: imageUrl(folderName, fileName),
-          })),
-        title: album.title || formatAlbumTitle(folderName || ""),
-      };
-    })
-    .filter((album) => album.folderName && album.photos.length > 0);
+  return flattenManifestEntries(albums);
 }
 
 async function discoverGalleryAlbums() {
@@ -309,16 +372,16 @@ async function discoverGalleryAlbums() {
 
   const albums = await Promise.all(
     folders.map(async (folderName) => {
-      const photos = await discoverAlbumPhotos(folderName);
+      const media = await discoverAlbumMedia(folderName);
       return {
         folderName,
-        photos,
+        media,
         title: formatAlbumTitle(folderName),
       };
     })
   );
 
-  return albums.filter((album) => album.photos.length > 0);
+  return albums.filter((album) => album.media.length > 0);
 }
 
 function renderAlbumGrid() {
@@ -328,7 +391,7 @@ function renderAlbumGrid() {
     const empty = document.createElement("div");
     empty.className = "album-empty";
     empty.innerHTML =
-      "<strong>No hay álbumes todavía.</strong><span>Crea una carpeta dentro de assets/gallery y añade imágenes jpg, png, webp, avif o gif.</span>";
+      "<strong>No hay álbumes todavía.</strong><span>Crea una carpeta dentro de assets/gallery y añade imágenes o vídeos.</span>";
     albumGrid.append(empty);
     return;
   }
@@ -340,16 +403,21 @@ function renderAlbumGrid() {
     button.setAttribute("aria-label", `Abrir álbum ${album.title}`);
     button.addEventListener("click", () => openAlbum(index));
 
-    const image = document.createElement("img");
-    image.src = album.photos[0].src;
-    image.alt = `Portada de ${album.title}`;
+    const cover = createMediaPreview(album.media[0], `Portada de ${album.title}`);
 
     const overlay = document.createElement("span");
     overlay.className = "album-overlay";
 
+    if (album.category) {
+      const category = document.createElement("span");
+      category.className = "album-category";
+      category.textContent = album.category;
+      overlay.append(category);
+    }
+
     const meta = document.createElement("span");
     meta.className = "album-meta";
-    meta.textContent = `${album.photos.length} ${album.photos.length === 1 ? "foto" : "fotos"}`;
+    meta.textContent = formatMediaCount(album.media);
 
     const title = document.createElement("strong");
     title.textContent = album.title;
@@ -359,9 +427,23 @@ function renderAlbumGrid() {
     action.textContent = "Ver álbum";
 
     overlay.append(meta, title, action);
-    button.append(image, overlay);
+    button.append(cover, overlay);
     albumGrid.append(button);
   });
+}
+
+function createMediaPreview(media, altText) {
+  if (media.type === "video" && !media.poster) {
+    const preview = document.createElement("span");
+    preview.className = "video-preview";
+    preview.textContent = "Vídeo";
+    return preview;
+  }
+
+  const image = document.createElement("img");
+  image.src = media.poster || media.src;
+  image.alt = altText;
+  return image;
 }
 
 async function loadGallery() {
@@ -372,18 +454,55 @@ async function loadGallery() {
     renderAlbumGrid();
   } catch {
     albumGrid.innerHTML =
-      "<div class=\"album-empty\"><strong>No se pudo leer la galería.</strong><span>Abre la web desde el servidor local para que el navegador pueda listar carpetas.</span></div>";
+      "<div class=\"album-empty\"><strong>No se pudo leer la galería.</strong><span>Revisa assets/gallery/gallery.json y que las rutas de los archivos existan.</span></div>";
   }
 }
 
-function setFeaturedPhoto(photo) {
-  modalFeatureImage.src = photo.src;
-  modalFeatureImage.alt = photo.caption;
-  modalFeatureCaption.textContent = photo.caption;
+function setFeaturedMedia(index) {
+  const album = galleryAlbums[currentAlbumIndex];
+  const media = album.media[index];
+
+  if (!media) {
+    return;
+  }
+
+  currentMediaIndex = index;
+  modalFeatureCaption.textContent = media.caption;
+
+  if (media.type === "video") {
+    modalFeatureImage.hidden = true;
+    modalFeatureImage.removeAttribute("src");
+    modalFeatureVideo.hidden = false;
+    modalFeatureVideo.src = media.src;
+    modalFeatureVideo.poster = media.poster || "";
+    modalFeatureVideo.load();
+  } else {
+    modalFeatureVideo.pause();
+    modalFeatureVideo.hidden = true;
+    modalFeatureVideo.removeAttribute("src");
+    modalFeatureVideo.removeAttribute("poster");
+    modalFeatureImage.hidden = false;
+    modalFeatureImage.src = media.src;
+    modalFeatureImage.alt = media.caption;
+  }
 
   Array.from(modalThumbs.querySelectorAll(".modal-thumb")).forEach((thumb) => {
-    thumb.classList.toggle("active", thumb.dataset.src === photo.src);
+    thumb.classList.toggle("active", Number(thumb.dataset.index) === currentMediaIndex);
   });
+
+  modalPrev.disabled = album.media.length < 2;
+  modalNext.disabled = album.media.length < 2;
+}
+
+function showAdjacentMedia(direction) {
+  const album = galleryAlbums[currentAlbumIndex];
+
+  if (!album || album.media.length < 2) {
+    return;
+  }
+
+  const nextIndex = (currentMediaIndex + direction + album.media.length) % album.media.length;
+  setFeaturedMedia(nextIndex);
 }
 
 function openAlbum(index) {
@@ -392,27 +511,25 @@ function openAlbum(index) {
     return;
   }
 
+  currentAlbumIndex = index;
+  currentMediaIndex = 0;
   modalTitle.textContent = album.title;
-  modalMeta.textContent = `${album.photos.length} ${album.photos.length === 1 ? "foto" : "fotos"} en ${album.folderName}`;
+  modalMeta.textContent = `${formatMediaCount(album.media)} en ${album.folderName}`;
   modalThumbs.innerHTML = "";
 
-  album.photos.forEach((photo) => {
+  album.media.forEach((media, mediaIndex) => {
     const thumb = document.createElement("button");
     thumb.type = "button";
-    thumb.className = "modal-thumb";
-    thumb.dataset.src = photo.src;
-    thumb.setAttribute("aria-label", `Ver ${photo.caption}`);
-    thumb.addEventListener("click", () => setFeaturedPhoto(photo));
+    thumb.className = media.type === "video" ? "modal-thumb video" : "modal-thumb";
+    thumb.dataset.index = mediaIndex;
+    thumb.setAttribute("aria-label", `Ver ${media.caption}`);
+    thumb.addEventListener("click", () => setFeaturedMedia(mediaIndex));
 
-    const image = document.createElement("img");
-    image.src = photo.src;
-    image.alt = photo.caption;
-
-    thumb.append(image);
+    thumb.append(createMediaPreview(media, media.caption));
     modalThumbs.append(thumb);
   });
 
-  setFeaturedPhoto(album.photos[0]);
+  setFeaturedMedia(0);
   galleryModal.hidden = false;
   document.body.classList.add("modal-open");
   modalClose.focus();
@@ -421,14 +538,27 @@ function openAlbum(index) {
 function closeAlbum() {
   galleryModal.hidden = true;
   document.body.classList.remove("modal-open");
+  modalFeatureVideo.pause();
+  modalFeatureVideo.removeAttribute("src");
+  modalFeatureVideo.removeAttribute("poster");
   modalFeatureImage.removeAttribute("src");
 }
 
 modalBackdrop.addEventListener("click", closeAlbum);
 modalClose.addEventListener("click", closeAlbum);
+modalPrev.addEventListener("click", () => showAdjacentMedia(-1));
+modalNext.addEventListener("click", () => showAdjacentMedia(1));
 document.addEventListener("keydown", (event) => {
   if (event.key === "Escape" && !galleryModal.hidden) {
     closeAlbum();
+  }
+
+  if (event.key === "ArrowLeft" && !galleryModal.hidden) {
+    showAdjacentMedia(-1);
+  }
+
+  if (event.key === "ArrowRight" && !galleryModal.hidden) {
+    showAdjacentMedia(1);
   }
 });
 

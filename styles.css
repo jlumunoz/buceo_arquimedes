@@ -188,8 +188,7 @@ a {
 }
 
 .hero-actions,
-.contact-actions,
-.calendar-actions {
+.contact-actions {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
@@ -242,10 +241,6 @@ a {
   color: var(--white);
   background: var(--reef);
   border-color: rgba(27, 85, 255, 0.45);
-}
-
-.button.danger {
-  color: #7e2f27;
 }
 
 .hero-highlights {
@@ -307,7 +302,6 @@ a {
 
 .fact-card,
 .course-card,
-.calendar-panel,
 .schedule-panel {
   border: 1px solid var(--line);
   border-radius: 8px;
@@ -377,8 +371,7 @@ a {
 }
 
 .course-card h3,
-.schedule-panel h3,
-.calendar-toolbar h3 {
+.schedule-panel h3 {
   margin: 0;
   color: var(--deep);
 }
@@ -465,11 +458,18 @@ a {
 }
 
 .album-meta,
+.album-category,
 .album-action {
   width: max-content;
   border-radius: 8px;
   font-size: 0.78rem;
   font-weight: 900;
+}
+
+.album-category {
+  padding: 6px 9px;
+  color: rgba(255, 255, 255, 0.86);
+  background: rgba(255, 255, 255, 0.12);
 }
 
 .album-meta {
@@ -496,6 +496,19 @@ a {
 
 .album-empty strong {
   color: var(--white);
+}
+
+.video-preview {
+  display: grid;
+  place-items: center;
+  height: 100%;
+  min-height: inherit;
+  color: var(--white);
+  background:
+    linear-gradient(135deg, rgba(27, 85, 255, 0.24), rgba(255, 255, 255, 0.06)),
+    #060f24;
+  font-size: 1.2rem;
+  font-weight: 900;
 }
 
 .route-band {
@@ -725,20 +738,6 @@ a {
   padding-top: 0;
 }
 
-.clear-month {
-  flex: 0 0 auto;
-  min-height: 30px;
-  padding: 0 9px;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  color: var(--deep);
-  background: #fbfdfc;
-  font: inherit;
-  font-size: 0.78rem;
-  font-weight: 800;
-  cursor: pointer;
-}
-
 body.modal-open {
   overflow: hidden;
 }
@@ -824,6 +823,7 @@ body.modal-open {
 }
 
 .modal-feature {
+  position: relative;
   min-height: 560px;
   margin: 0;
   overflow: hidden;
@@ -831,15 +831,53 @@ body.modal-open {
   background: #031016;
 }
 
-.modal-feature img {
+.modal-feature img,
+.modal-feature video {
+  display: block;
+  width: 100%;
   height: 560px;
   object-fit: cover;
+}
+
+.modal-feature video {
+  background: #000;
 }
 
 .modal-feature figcaption {
   padding: 14px 16px;
   color: rgba(255, 255, 255, 0.82);
   font-weight: 800;
+}
+
+.modal-nav {
+  position: absolute;
+  top: 50%;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 58px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 8px;
+  color: var(--white);
+  background: rgba(4, 11, 24, 0.62);
+  font-size: 2.4rem;
+  line-height: 1;
+  cursor: pointer;
+  transform: translateY(-50%);
+}
+
+.modal-nav.prev {
+  left: 14px;
+}
+
+.modal-nav.next {
+  right: 14px;
+}
+
+.modal-nav:disabled {
+  opacity: 0.35;
+  cursor: default;
 }
 
 .modal-thumbs {
@@ -870,6 +908,19 @@ body.modal-open {
 .modal-thumb img {
   height: 100%;
   object-fit: cover;
+}
+
+.modal-thumb.video::after {
+  content: "Vídeo";
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  padding: 4px 7px;
+  border-radius: 8px;
+  color: var(--white);
+  background: var(--reef);
+  font-size: 0.72rem;
+  font-weight: 900;
 }
 
 .contact-section {
@@ -983,20 +1034,12 @@ body.modal-open {
     font-size: 2.15rem;
   }
 
-  .calendar-toolbar h3 {
-    font-size: 1.3rem;
-  }
-
   .hero p:not(.eyebrow) {
     font-size: 1rem;
   }
 
   .section-inner {
     width: calc(100% - 28px);
-  }
-
-  .calendar-panel {
-    padding: 14px;
   }
 
   .album-grid,
@@ -1030,8 +1073,15 @@ body.modal-open {
     min-height: 320px;
   }
 
-  .modal-feature img {
+  .modal-feature img,
+  .modal-feature video {
     height: 320px;
+  }
+
+  .modal-nav {
+    width: 40px;
+    height: 50px;
+    font-size: 2rem;
   }
 
   .modal-thumbs {

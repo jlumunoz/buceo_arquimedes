@@ -1,14 +1,19 @@
 [
   {
-    "folder": "Curso_B1E_Sevilla",
-    "photos": ["curso-01.jpg", "equipo-02.jpg"]
+    "title": "Cursos",
+    "albums": [
+      {
+        "folder": "Curso_B1E_Sevilla",
+        "media": ["curso-01.jpg", "equipo-02.jpg"]
+      }
+    ]
   },
   {
     "folder": "Maldivas_2026",
-    "photos": ["grupo-03.jpg", "inmersion-01.jpg", "inmersion-02.jpg"]
+    "media": ["1.jpeg", "2.jpeg", "3.jpeg", "4.jpeg"]
   },
   {
     "folder": "Salidas_La_Herradura",
-    "photos": ["salida-01.jpg", "salida-02.jpg"]
+    "media": ["salida-01.jpg", "salida-02.jpg"]
   }
 ]

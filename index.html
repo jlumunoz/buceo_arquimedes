@@ -9,8 +9,8 @@
     />
     <title>Buceo Arquímedes | Escuela de buceo en Sevilla</title>
     <link rel="preconnect" href="https://images.unsplash.com" />
-    <link rel="stylesheet" href="styles.css?v=github-pages-gallery" />
-    <script src="script.js?v=github-pages-gallery" defer></script>
+    <link rel="stylesheet" href="styles.css?v=nested-media-gallery" />
+    <script src="script.js?v=nested-media-gallery" defer></script>
   </head>
   <body>
     <header class="site-header">
@@ -224,16 +224,19 @@
           <div>
             <p class="eyebrow">Álbum</p>
             <h2 id="modalTitle">Galería</h2>
-            <p id="modalMeta">Fotos del álbum</p>
+            <p id="modalMeta">Fotos y vídeos del álbum</p>
           </div>
           <button class="modal-close" id="modalClose" type="button" aria-label="Cerrar modal">×</button>
         </div>
         <div class="modal-body">
           <figure class="modal-feature">
+            <button class="modal-nav prev" id="modalPrev" type="button" aria-label="Archivo anterior">‹</button>
             <img id="modalFeatureImage" alt="" />
+            <video id="modalFeatureVideo" controls playsinline hidden></video>
+            <button class="modal-nav next" id="modalNext" type="button" aria-label="Archivo siguiente">›</button>
             <figcaption id="modalFeatureCaption"></figcaption>
           </figure>
-          <div class="modal-thumbs" id="modalThumbs" aria-label="Fotos del álbum"></div>
+          <div class="modal-thumbs" id="modalThumbs" aria-label="Fotos y vídeos del álbum"></div>
         </div>
       </section>
     </div>
