@@ -1,0 +1,6 @@
+// Generado por scripts/build.mjs.
+globalThis.arquimedesCourseDates = [
+  "2026-01-12",
+  "2026-02-09",
+  "2026-03-23"
+];

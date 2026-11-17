@@ -23,7 +23,7 @@ gallery/
     └── 01-desde-el-puerto.jpg
 ```
 
-El nombre de la carpeta aparece como título. Las imágenes se ordenan por nombre y la primera es la portada. Se admiten JPG, JPEG, PNG, WebP, GIF y AVIF. Solo se muestran las carpetas con imágenes. Para añadir fotos a un álbum existente, súbelas a su carpeta.
+El nombre de la carpeta aparece como título y los guiones bajos se muestran como espacios. Puedes agrupar álbumes en subcarpetas, por ejemplo, `gallery/Cursos/2025-Octubre/`. Las imágenes se ordenan por nombre y la primera es la portada. Se admiten JPG, JPEG, PNG, WebP, GIF y AVIF. Solo se muestran las carpetas con imágenes. Para añadir fotos a un álbum existente, súbelas a su carpeta.
 
 Si quieres incluir fecha y tipo de actividad, añade un archivo `album.json` dentro de esa carpeta. Todos sus campos son opcionales.
 
@@ -43,7 +43,7 @@ Edita `data/cursos.json`. Escribe el lunes de cada semana en formato `AAAA-MM-DD
 
 ## Generar en local
 
-Con Node.js 22, ejecuta `node scripts/build.mjs` desde la raíz. Se generará la carpeta `_site` con los archivos publicables. Puedes servir esa carpeta con cualquier servidor HTTP local. Por ejemplo, si tienes Python, ejecuta `python -m http.server 4173 --directory _site` y visita [la vista local](http://localhost:4173/).
+Con Node.js 22, ejecuta `node scripts/build.mjs` desde la raíz después de añadir fotos o cambiar fechas. Después puedes abrir `index.html` directamente en el navegador. El mismo comando genera la carpeta `_site` y actualiza los archivos de datos que usa la vista local. GitHub Actions ejecuta el comando automáticamente al publicar.
 
 ## Dominio propio
 

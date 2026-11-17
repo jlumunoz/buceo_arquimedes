@@ -5,9 +5,7 @@ const yearLabel = document.querySelector("#calendar-year");
 const status = document.querySelector("#calendar-status");
 const previous = document.querySelector("#calendar-prev");
 const next = document.querySelector("#calendar-next");
-const retry = document.querySelector("#calendar-retry");
 let year = Number(new Intl.DateTimeFormat("en", {year: "numeric", timeZone: "Europe/Madrid"}).format(new Date()));
-let activeLoad;
 
 function updateYearControls() {
   previous.disabled = year === minimumYear;
@@ -33,34 +31,19 @@ function renderYear(courseDates) {
   months.replaceChildren(...cards);
 }
 
-async function loadYear() {
-  activeLoad?.abort();
-  const load = new AbortController();
-  activeLoad = load;
+function loadYear() {
   yearLabel.textContent = year;
   updateYearControls();
-  months.replaceChildren();
-  months.setAttribute("aria-busy", "true");
-  retry.hidden = true;
-  status.textContent = "Cargando calendario…";
-
-  try {
-    const response = await fetch("data/cursos.json", {signal: load.signal});
-    if (!response.ok) throw new Error("Calendar unavailable");
-    const courseDates = await response.json();
-    if (load.signal.aborted) return;
+  const courseDates = globalThis.arquimedesCourseDates;
+  if (Array.isArray(courseDates)) {
     renderYear(courseDates);
     status.textContent = "";
-  } catch {
-    if (load.signal.aborted) return;
-    retry.hidden = false;
+  } else {
     status.textContent = "No se ha podido cargar el calendario.";
-  } finally {
-    if (!load.signal.aborted) months.setAttribute("aria-busy", "false");
   }
+  months.setAttribute("aria-busy", "false");
 }
 
 previous.addEventListener("click", () => { year--; loadYear(); });
 next.addEventListener("click", () => { year++; loadYear(); });
-retry.addEventListener("click", loadYear);
 loadYear();

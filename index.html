@@ -13,7 +13,9 @@
   <link rel="stylesheet" href="styles.css">
   <script src="main.js" defer></script>
   <script src="calendar-weeks.js" defer></script>
+  <script src="data/cursos.js" defer></script>
   <script src="calendario.js" defer></script>
+  <script src="gallery/albums.js" defer></script>
   <script src="galeria.js" defer></script>
 </head>
 <body>
@@ -153,7 +155,6 @@
       <div class="calendar-meta">
         <span class="calendar-legend"><span aria-hidden="true"></span> Semana de curso</span>
         <p id="calendar-status" role="status"></p>
-        <button type="button" class="calendar-retry" id="calendar-retry" hidden>Volver a cargar</button>
       </div>
       <div id="calendar-months" class="calendar-months" aria-busy="true"></div>
       <noscript>Activa JavaScript para consultar las semanas de curso.</noscript>
@@ -184,7 +185,6 @@
         <p>Álbumes de cursos, bautismos y salidas de Buceo Arquímedes.</p>
       </div>
       <p id="gallery-status" role="status">Cargando álbumes…</p>
-      <button id="gallery-retry" class="gallery-retry" type="button" hidden>Volver a cargar</button>
       <div id="gallery-albums" class="gallery-albums"></div>
       <noscript>Activa JavaScript para ver los álbumes.</noscript>
       <dialog class="gallery-viewer" id="gallery-viewer" aria-labelledby="gallery-viewer-title">

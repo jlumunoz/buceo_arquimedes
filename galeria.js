@@ -2,7 +2,6 @@
   const byId = (id) => document.getElementById(id);
   const albumsPanel = byId("gallery-albums");
   const galleryStatus = byId("gallery-status");
-  const retry = byId("gallery-retry");
   const viewer = byId("gallery-viewer");
   const viewerTitle = byId("gallery-viewer-title");
   const viewerPhoto = byId("gallery-viewer-image");
@@ -80,22 +79,17 @@
     return card;
   }
 
-  async function loadGallery() {
-    retry.hidden = true;
-    try {
-      const response = await fetch("gallery/albums.json");
-      if (!response.ok) throw new Error("Gallery unavailable");
-      const albums = await response.json();
-      albumsPanel.replaceChildren(...albums.map(renderAlbum));
-      galleryStatus.textContent = albums.length ? "" : "Aún no hay álbumes publicados.";
-    } catch {
+  function loadGallery() {
+    const albums = globalThis.arquimedesAlbums;
+    if (!Array.isArray(albums)) {
       galleryStatus.textContent = "No se han podido cargar los álbumes.";
-      retry.hidden = false;
+      return;
     }
+    albumsPanel.replaceChildren(...albums.map(renderAlbum));
+    galleryStatus.textContent = albums.length ? "" : "Aún no hay álbumes publicados.";
   }
 
   previous.addEventListener("click", () => { currentPhoto--; showPhoto(); });
   next.addEventListener("click", () => { currentPhoto++; showPhoto(); });
-  retry.addEventListener("click", loadGallery);
   loadGallery();
 })();

@@ -32,7 +32,8 @@ async function loadCourseDates() {
 }
 
 async function albumMetadata(directory, name, metadataFile) {
-  if (!metadataFile) return {title: name};
+  const title = name.split("/").at(-1).replaceAll("_", " ");
+  if (!metadataFile) return {title};
   const data = JSON.parse(await readFile(join(directory, "album.json"), "utf8"));
   if (!data || typeof data !== "object" || Array.isArray(data)) {
     throw new Error(`gallery/${name}/album.json debe contener un objeto JSON.`);
@@ -43,27 +44,30 @@ async function albumMetadata(directory, name, metadataFile) {
     }
   }
   if (data.date !== undefined && !isoDate(data.date)) throw new Error(`La fecha del álbum ${name} debe tener formato AAAA-MM-DD.`);
-  return {title: data.title?.trim() || name, date: data.date, category: data.category?.trim()};
+  return {title: data.title?.trim() || title, date: data.date, category: data.category?.trim()};
 }
 
-async function collectAlbums() {
-  const gallery = join(root, "gallery");
+async function collectAlbums(directory, segments = []) {
+  const files = await readdir(directory, {withFileTypes: true});
   const albums = [];
-  for (const folder of await readdir(gallery, {withFileTypes: true})) {
-    if (!folder.isDirectory() || folder.name.startsWith(".")) continue;
-    const directory = join(gallery, folder.name);
-    const files = await readdir(directory, {withFileTypes: true});
-    const photoNames = files.filter((file) => file.isFile() && !file.name.startsWith(".") && formats.has(extname(file.name).toLowerCase()))
-      .map((file) => file.name)
-      .sort((a, b) => order.compare(a, b) || a.localeCompare(b));
-    if (!photoNames.length) continue;
-    const metadata = await albumMetadata(directory, folder.name, files.some((file) => file.isFile() && file.name === "album.json"));
-    albums.push({folder: folder.name, directory, photoNames, metadata});
+  const photoNames = files.filter((file) => file.isFile() && !file.name.startsWith(".") && formats.has(extname(file.name).toLowerCase()))
+    .map((file) => file.name)
+    .sort((a, b) => order.compare(a, b) || a.localeCompare(b));
+  if (segments.length && photoNames.length) {
+    const metadata = await albumMetadata(directory, segments.join("/"), files.some((file) => file.isFile() && file.name === "album.json"));
+    albums.push({segments, directory, photoNames, metadata});
   }
-  return albums.sort((a, b) => (b.metadata.date || "").localeCompare(a.metadata.date || "") || order.compare(a.metadata.title, b.metadata.title));
+  for (const folder of files) {
+    if (folder.isDirectory() && !folder.name.startsWith(".")) {
+      albums.push(...await collectAlbums(join(directory, folder.name), [...segments, folder.name]));
+    }
+  }
+  return albums;
 }
 
-const [courses, albums] = await Promise.all([loadCourseDates(), collectAlbums()]);
+const [courses, albums] = await Promise.all([loadCourseDates(), collectAlbums(join(root, "gallery"))]);
+albums.sort((a, b) => (b.metadata.date || "").localeCompare(a.metadata.date || "") ||
+  order.compare(a.metadata.title, b.metadata.title) || order.compare(a.segments.join("/"), b.segments.join("/")));
 const previous = await lstat(output).catch((error) => {
   if (error.code !== "ENOENT") throw error;
   return null;
@@ -80,17 +84,23 @@ await mkdir(join(output, "gallery"), {recursive: true});
 const pages = ["index.html", "styles.css", "main.js", "calendar-weeks.js", "calendario.js", "galeria.js"];
 await Promise.all([
   ...pages.map((file) => copyFile(join(root, file), join(output, file))),
-  cp(join(root, "assets"), join(output, "assets"), {recursive: true}),
-  writeFile(join(output, "data", "cursos.json"), JSON.stringify(courses, null, 2) + "\n")
+  cp(join(root, "assets"), join(output, "assets"), {recursive: true})
 ]);
 
 const manifest = [];
-for (const {folder, directory, photoNames, metadata} of albums) {
-  const destination = join(output, "gallery", folder);
+for (const {segments, directory, photoNames, metadata} of albums) {
+  const destination = join(output, "gallery", ...segments);
   await mkdir(destination, {recursive: true});
   for (const name of photoNames) await copyFile(join(directory, name), join(destination, name));
-  const photos = photoNames.map((name) => `gallery/${encodeURIComponent(folder)}/${encodeURIComponent(name)}`);
+  const photos = photoNames.map((name) => ["gallery", ...segments.map(encodeURIComponent), encodeURIComponent(name)].join("/"));
   manifest.push({...metadata, photos});
 }
-await writeFile(join(output, "gallery", "albums.json"), JSON.stringify(manifest, null, 2) + "\n");
+const dataFiles = [
+  ["gallery/albums.js", "arquimedesAlbums", manifest],
+  ["data/cursos.js", "arquimedesCourseDates", courses]
+];
+for (const [file, key, data] of dataFiles) {
+  const script = `// Generado por scripts/build.mjs.\nglobalThis.${key} = ${JSON.stringify(data, null, 2)};\n`;
+  await Promise.all([writeFile(join(root, file), script), writeFile(join(output, file), script)]);
+}
 console.log(`Web generada en _site · ${manifest.length} álbumes · ${courses.length} semanas de curso`);
