@@ -1,62 +1,50 @@
-# Buceo Arquímedes Web
+# Buceo Arquímedes para GitHub Pages
 
-Proyecto web estático para una escuela de buceo de Sevilla llamada **Buceo Arquímedes**.
+La web se publica como archivos estáticos. La galería se genera a partir de las carpetas del repositorio y se puede consultar sin cuenta.
 
-## Archivos
+## Subir y publicar
 
-- `index.html`: estructura de la página.
-- `styles.css`: diseño responsive.
-- `script.js`: calendario anual y galería dinámica por carpetas.
-- `assets/gallery/`: carpeta preparada para álbumes de cursos y salidas.
+1. Crea un repositorio en GitHub con rama `main`. En GitHub Free, usa un repositorio público para publicar con Pages.
+2. Sube todos los archivos de este proyecto a la raíz del repositorio. Incluye `.github/workflows/pages.yml`, que se encarga de generar y publicar la web.
+3. En GitHub, ve a **Settings → Pages → Build and deployment → Source → GitHub Actions**.
+4. Ve a **Actions → Publicar en GitHub Pages → Run workflow** para lanzar la primera publicación si aún no ha terminado una ejecución. En la ejecución verás el enlace de la web.
+5. Cada cambio que subas a `main` volverá a generar y publicar la web con las nuevas fotos.
 
-## Cómo verlo
+## Añadir álbumes y fotos
 
-Abre `index.html` en el navegador. No necesita instalar dependencias.
+Crea una subcarpeta en `gallery` por cada curso, bautismo o salida y coloca las fotos directamente dentro.
 
-## Fuentes usadas
+```text
+gallery/
+├── Curso 1 estrella - marzo/
+│   ├── 01-equipo.jpg
+│   └── 02-inmersion.webp
+└── Salida a La Herradura/
+    └── 01-desde-el-puerto.jpg
+```
 
-El contenido se ha resumido desde la web oficial:
+El nombre de la carpeta aparece como título. Las imágenes se ordenan por nombre y la primera es la portada. Se admiten JPG, JPEG, PNG, WebP, GIF y AVIF. Solo se muestran las carpetas con imágenes. Para añadir fotos a un álbum existente, súbelas a su carpeta.
 
-- https://www.buceoarquimedes.com/inicio
-- https://www.buceoarquimedes.com/cursos
-- https://www.buceoarquimedes.com/contacto
-
-Las imágenes de apoyo proceden de Unsplash y usan su licencia gratuita.
-
-El calendario anual es de solo lectura. Las semanas de curso se cambian por codigo en `DEFAULT_COURSE_WEEKS`, dentro de `script.js`.
-
-## Galería por carpetas
-
-Cada carpeta dentro de `assets/gallery/` puede convertirse en un álbum. Para que funcione en GitHub Pages, añade el álbum y sus archivos a `assets/gallery/gallery.json`.
-
-Ejemplo:
-
-- `assets/gallery/Maldivas_2026/` aparece como `Maldivas 2026`.
-- `assets/gallery/Salidas_La_Herradura/` aparece como `Salidas La Herradura`.
-
-Dentro de cada carpeta se muestran imágenes y vídeos. Formatos soportados: `.jpg`, `.jpeg`, `.png`, `.webp`, `.avif`, `.gif`, `.mp4`, `.webm`, `.ogg`, `.mov` y `.m4v`. Al hacer clic en un álbum se abre un modal con flechas para moverse entre archivos.
-
-GitHub Pages no lista carpetas automáticamente, por eso la galería usa `gallery.json`. Si creas `assets/gallery/Maldivas_2026/`, añade algo así:
+Si quieres incluir fecha y tipo de actividad, añade un archivo `album.json` dentro de esa carpeta. Todos sus campos son opcionales.
 
 ```json
 {
-  "folder": "Maldivas_2026",
-  "media": ["foto-01.jpg", "video-01.mp4"]
+  "title": "Curso de 1 estrella en La Herradura",
+  "date": "2026-03-23",
+  "category": "Curso"
 }
 ```
 
-También puedes crear subcarpetas, por ejemplo `assets/gallery/Cursos/2026-02-16/`:
+Los álbumes con fecha aparecen primero, del más reciente al más antiguo. Las imágenes subidas a un repositorio público de GitHub son públicas.
 
-```json
-{
-  "title": "Cursos",
-  "folder": "Cursos",
-  "albums": [
-    {
-      "title": "B1E 16 Febrero 2026",
-      "folder": "2026-02-16",
-      "media": ["foto-01.jpg", "video-01.mp4"]
-    }
-  ]
-}
-```
+## Cambiar las semanas de curso
+
+Edita `data/cursos.json`. Escribe el lunes de cada semana en formato `AAAA-MM-DD`. Se admite una semana por mes. Una semana que cruza de mes se muestra en el mes en que empieza, con la primera semana ISO del año situada en enero. Los visitantes consultan el calendario en modo solo lectura.
+
+## Generar en local
+
+Con Node.js 22, ejecuta `node scripts/build.mjs` desde la raíz. Se generará la carpeta `_site` con los archivos publicables. Puedes servir esa carpeta con cualquier servidor HTTP local. Por ejemplo, si tienes Python, ejecuta `python -m http.server 4173 --directory _site` y visita [la vista local](http://localhost:4173/).
+
+## Dominio propio
+
+Una vez publicada la web, puedes añadir un dominio en **Settings → Pages → Custom domain**. Usa los registros DNS que indique GitHub Pages cuando decidas efectuar el cambio.

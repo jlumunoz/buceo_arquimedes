@@ -1,244 +1,269 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta
-      name="description"
-      content="Web de Buceo Arquímedes, escuela de buceo FEDAS/CMAS en Sevilla con cursos, galería y calendario anual."
-    />
-    <title>Buceo Arquímedes | Escuela de buceo en Sevilla</title>
-    <link rel="preconnect" href="https://images.unsplash.com" />
-    <link rel="stylesheet" href="styles.css?v=nested-media-gallery" />
-    <script src="script.js?v=nested-media-gallery" defer></script>
-  </head>
-  <body>
-    <header class="site-header">
-      <a class="brand" href="#inicio" aria-label="Buceo Arquímedes">
-        <span class="brand-mark">A</span>
-        <span>
-          <strong>Arquímedes</strong>
-          <small>Escuela FEDAS/CMAS</small>
-        </span>
-      </a>
-      <nav class="main-nav" aria-label="Navegación principal">
-        <a href="#escuela">Escuela</a>
-        <a href="#cursos">Cursos</a>
-        <a href="#galeria">Galería</a>
-        <a href="#calendario">Calendario</a>
-        <a href="#contacto">Contacto</a>
-      </nav>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Buceo Arquímedes | Escuela de buceo en Sevilla</title>
+  <meta name="description" content="Bautismos, cursos FEDAS–CMAS e inmersiones en La Herradura, Granada, con Buceo Arquímedes, escuela de buceo de Sevilla.">
+  <meta name="theme-color" content="#071e29">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script src="main.js" defer></script>
+  <script src="calendar-weeks.js" defer></script>
+  <script src="calendario.js" defer></script>
+  <script src="galeria.js" defer></script>
+</head>
+<body>
+  <svg class="symbols" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <symbol id="mark" viewBox="0 0 36 36"><path d="m4 23 8-12 6 9 6-9 8 12M4 29c5 0 5-4 10-4s5 4 10 4 5-4 8-4" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="arrow" viewBox="0 0 24 24"><path d="M4 12h15m-6-6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="external" viewBox="0 0 24 24"><path d="M6 18 18 6M8 6h10v10" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="pin" viewBox="0 0 24 24"><path d="M19 10c0 5-7 10-7 10S5 15 5 10a7 7 0 1 1 14 0Z" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="10" r="2.2" fill="none" stroke="currentColor" stroke-width="1.6"/></symbol>
+    <symbol id="mask" viewBox="0 0 40 40"><path d="M5 15c0-3 2-5 5-5h20c3 0 5 2 5 5v4c0 5-3 8-7 8-3 0-4-2-5-4-1-2-5-2-6 0s-2 4-5 4c-4 0-7-3-7-8Zm0 3H2m33 0h3M10 15h5m10 0h5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="tank" viewBox="0 0 40 40"><path d="M15 12V8h10v4m-5-4V5m0 1h7m-7 6c-5 0-8 4-8 9v11c0 2 2 3 4 3h8c2 0 4-1 4-3V21c0-5-3-9-8-9Zm-8 16h16m-16-8h16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="compass" viewBox="0 0 40 40"><circle cx="20" cy="20" r="14" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="m26 14-4 8-8 4 4-8 8-4Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></symbol>
+  </svg>
+  <a class="skip" href="#contenido">Saltar al contenido</a>
+  <main>
+  <div class="opening" id="inicio">
+    <img class="hero-image" src="assets/buceo-mediterraneo.jpg" alt="" width="1536" height="1024" fetchpriority="high">
+    <header class="site-header" role="banner">
+      <div class="wrap header-inner">
+        <a class="brand" href="#inicio" aria-label="Buceo Arquímedes, inicio">
+          <svg aria-hidden="true"><use href="#mark"/></svg>
+          <span><small>BUCEO</small><strong>ARQUÍMEDES</strong></span>
+        </a>
+        <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav" hidden>Menú <span aria-hidden="true"></span></button>
+        <nav id="site-nav" aria-label="Navegación principal">
+          <a href="#actividades">Actividades</a>
+          <a href="#calendario">Calendario</a>
+          <a href="#la-herradura">La Herradura</a>
+          <a href="#galeria">Galería</a>
+          <a href="#escuela">La escuela</a>
+          <a class="nav-contact" href="#contacto">Contacto <svg aria-hidden="true"><use href="#arrow"/></svg></a>
+        </nav>
+      </div>
     </header>
-
-    <main>
-      <section class="hero" id="inicio">
-        <div class="hero-media" aria-hidden="true"></div>
-        <div class="hero-content">
-          <p class="eyebrow">Buceo recreativo y formación técnica en Sevilla</p>
-          <h1>Buceo Arquímedes</h1>
-          <p>
-            Más de 35 años formando buceadores con titulaciones FEDAS/CMAS,
-            práctica cuidada y salidas al Mediterráneo desde La Herradura y
-            Almuñécar.
-          </p>
-          <div class="hero-actions">
-            <a class="button primary" href="#calendario">Ver calendario</a>
-            <a class="button ghost" href="#contacto">Reservar plaza</a>
-          </div>
-          <div class="hero-highlights" aria-label="Puntos destacados">
-            <span>Sevilla</span>
-            <span>FEDAS/CMAS</span>
-            <span>Prácticas en mar</span>
-          </div>
+    <div id="contenido" tabindex="-1">
+      <section class="hero wrap" aria-labelledby="hero-title">
+        <div class="hero-copy">
+          <p class="eyebrow"><span class="dot"></span> Escuela de buceo · Sevilla</p>
+          <h1 id="hero-title">El Mediterráneo,<br><em>bajo la superficie.</em></h1>
+          <p class="hero-description">Bautismos, cursos FEDAS–CMAS e inmersiones en La Herradura, Granada.</p>
+          <a class="button primary" href="#actividades">Explorar actividades <svg aria-hidden="true"><use href="#arrow"/></svg></a>
         </div>
-      </section>
-
-      <section class="section band intro-band" id="escuela">
-        <div class="section-inner split">
-          <div>
-            <p class="eyebrow">Escuela de buceo FEDAS/CMAS</p>
-            <h2>Formación con seguridad, técnica y vida de club</h2>
-            <p>
-              Arquímedes trabaja desde Sevilla con el objetivo de elevar el
-              nivel técnico y la seguridad entre buceadores. Su plan combina
-              teoría, piscina y prácticas en mar para que cada alumno avance
-              con acompañamiento real.
-            </p>
-          </div>
-          <div class="facts-grid" aria-label="Datos principales">
-            <article class="fact-card">
-              <span>35+</span>
-              <p>años a la vanguardia del buceo</p>
-            </article>
-            <article class="fact-card">
-              <span>1992</span>
-              <p>club inscrito como entidad deportiva</p>
-            </article>
-            <article class="fact-card">
-              <span>CMAS</span>
-              <p>titulaciones reconocidas internacionalmente</p>
-            </article>
-          </div>
-        </div>
-      </section>
-
-      <section class="section" id="cursos">
-        <div class="section-inner">
-          <div class="section-title">
-            <p class="eyebrow">Plan de formación</p>
-            <h2>Cursos de buceador y progresión FEDAS</h2>
-          </div>
-          <div class="course-grid">
-            <article class="course-card">
-              <img
-                src="https://images.unsplash.com/photo-1742461399600-3ded0fe5bb0e?auto=format&fit=crop&fm=jpg&ixlib=rb-4.1.0&q=70&w=1200"
-                alt="Buceadores durante una actividad de formación"
-              />
-              <div>
-                <h3>B1E: primera estrella</h3>
-                <p>
-                  Iniciación para aprender procedimientos, control de equipo y
-                  primeras inmersiones con seguridad.
-                </p>
-              </div>
-            </article>
-            <article class="course-card">
-              <img
-                src="https://images.unsplash.com/photo-1682687982167-d7fb3ed8541d?auto=format&fit=crop&fm=jpg&ixlib=rb-4.1.0&q=70&w=1200"
-                alt="Grupo de buceo en una salida de prácticas"
-              />
-              <div>
-                <h3>B2E: autonomía</h3>
-                <p>
-                  Continuación para buceadores con experiencia que quieren
-                  planificar mejor y ampliar capacidades.
-                </p>
-              </div>
-            </article>
-            <article class="course-card">
-              <img
-                src="https://images.unsplash.com/photo-1706565722522-62103c436eb9?auto=format&fit=crop&fm=jpg&ixlib=rb-4.1.0&q=70&w=1200"
-                alt="Material y equipo de buceo preparado para el curso"
-              />
-              <div>
-                <h3>B3E y especialidades</h3>
-                <p>
-                  Progresión avanzada, reciclajes y apoyo federativo para seguir
-                  creciendo dentro del club.
-                </p>
-              </div>
-            </article>
-          </div>
-        </div>
-      </section>
-
-      <section class="section gallery-section" id="galeria">
-        <div class="section-inner">
-          <div class="section-title">
-            <p class="eyebrow">Galería</p>
-            <h2>Álbumes de cursos y salidas</h2>
-          </div>
-          <div class="album-grid" id="albumGrid" aria-live="polite"></div>
-        </div>
-      </section>
-
-      <section class="section band route-band">
-        <div class="section-inner route-grid">
-          <div>
-            <p class="eyebrow">Cómo se organizan</p>
-            <h2>Una semana de curso al mes</h2>
-            <p>
-              El calendario anual muestra una semana completa para las clases y
-              prácticas de cada mes. Los meses sin curso quedan visibles para
-              planificar el año de un vistazo.
-            </p>
-          </div>
-          <ol class="steps">
-            <li><span>1</span>Teoría y preparación de equipo en Sevilla</li>
-            <li><span>2</span>Sesiones en piscina para fijar técnica</li>
-            <li><span>3</span>Prácticas de mar en La Herradura y Almuñécar</li>
-          </ol>
-        </div>
-      </section>
-
-      <section class="section calendar-section" id="calendario">
-        <div class="section-inner">
-          <div class="section-title">
-            <p class="eyebrow">Calendario de cursos</p>
-            <h2>Calendario anual de formación</h2>
-          </div>
-          <div class="year-toolbar">
-            <button class="icon-button" id="prevYear" type="button" aria-label="Año anterior">
-              ‹
-            </button>
-            <div>
-              <h3 id="yearLabel">2026</h3>
-              <p id="yearSummary">Semanas de curso marcadas</p>
-            </div>
-            <button class="icon-button" id="nextYear" type="button" aria-label="Año siguiente">
-              ›
-            </button>
-          </div>
-          <div class="annual-calendar" id="annualCalendar" aria-label="Calendario anual"></div>
-        </div>
-      </section>
-
-      <section class="section contact-section" id="contacto">
-        <div class="section-inner contact-grid">
-          <div>
-            <p class="eyebrow">Contacto</p>
-            <h2>Reserva tu plaza con Arquímedes</h2>
-            <p>
-              Para confirmar fechas, licencias y disponibilidad, contacta con la
-              escuela o revisa su web oficial.
-            </p>
-          </div>
-          <div class="contact-actions">
-            <a class="button primary" href="https://www.buceoarquimedes.com/contacto" target="_blank" rel="noreferrer">
-              Web oficial
-            </a>
-            <a class="button ghost dark" href="https://www.instagram.com/buceo.arquimedes/" target="_blank" rel="noreferrer">
-              Instagram
-            </a>
-            <a class="button ghost dark" href="https://www.facebook.com/buceoarquimedes" target="_blank" rel="noreferrer">
-              Facebook
-            </a>
-          </div>
-        </div>
-      </section>
-    </main>
-
-    <footer class="site-footer">
-      <p>
-        Contenido adaptado a partir de la web oficial de Buceo Arquímedes.
-      </p>
-      <a href="https://www.buceoarquimedes.com/inicio" target="_blank" rel="noreferrer">
-        buceoarquimedes.com
-      </a>
-    </footer>
-
-    <div class="gallery-modal" id="galleryModal" hidden>
-      <button class="modal-backdrop" id="modalBackdrop" type="button" aria-label="Cerrar galería"></button>
-      <section class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-        <div class="modal-header">
-          <div>
-            <p class="eyebrow">Álbum</p>
-            <h2 id="modalTitle">Galería</h2>
-            <p id="modalMeta">Fotos y vídeos del álbum</p>
-          </div>
-          <button class="modal-close" id="modalClose" type="button" aria-label="Cerrar modal">×</button>
-        </div>
-        <div class="modal-body">
-          <figure class="modal-feature">
-            <button class="modal-nav prev" id="modalPrev" type="button" aria-label="Archivo anterior">‹</button>
-            <img id="modalFeatureImage" alt="" />
-            <video id="modalFeatureVideo" controls playsinline hidden></video>
-            <button class="modal-nav next" id="modalNext" type="button" aria-label="Archivo siguiente">›</button>
-            <figcaption id="modalFeatureCaption"></figcaption>
-          </figure>
-          <div class="modal-thumbs" id="modalThumbs" aria-label="Fotos y vídeos del álbum"></div>
-        </div>
+        <a class="hero-location" href="#la-herradura"><svg aria-hidden="true"><use href="#pin"/></svg><span>La Herradura <small>Costa Tropical, Granada</small></span></a>
       </section>
     </div>
-  </body>
+  </div>
+  <div class="info-strip">
+    <div class="wrap strip-inner"><span>Desde 1992</span><span>Formación FEDAS–CMAS</span><span>Sevilla <svg aria-hidden="true"><use href="#arrow"/></svg> La Herradura</span></div>
+  </div>
+  <section class="section wrap" id="actividades" aria-labelledby="activities-title">
+    <div class="section-head">
+      <div><p class="eyebrow"><span class="dot"></span> Actividades</p><h2 id="activities-title">Encuentra tu próxima inmersión</h2></div>
+      <p>Da tus primeras aletadas, fórmate o vuelve al agua con tu titulación.</p>
+    </div>
+    <div class="cards">
+      <article class="activity">
+        <div class="activity-icon"><svg aria-hidden="true"><use href="#mask"/></svg></div>
+        <h3>Bautismo de buceo</h3>
+        <p>Prueba el equipo y descubre cómo se siente respirar bajo el agua con el acompañamiento de un instructor.</p>
+        <a href="https://wa.me/34658504324?text=Hola%2C%20me%20gustar%C3%ADa%20consultar%20por%20un%20bautismo%20de%20buceo.">Consultar bautismos <svg aria-hidden="true"><use href="#arrow"/></svg></a>
+      </article>
+      <article class="activity">
+        <div class="activity-icon"><svg aria-hidden="true"><use href="#tank"/></svg></div>
+        <h3>Cursos FEDAS–CMAS</h3>
+        <p>Fórmate en los niveles de 1, 2 y 3 estrellas o amplía tu experiencia con especialidades como navegación, nitrox y buceo nocturno.</p>
+        <a href="#formacion">Ver el plan de formación <svg aria-hidden="true"><use href="#arrow"/></svg></a>
+      </article>
+      <article class="activity">
+        <div class="activity-icon"><svg aria-hidden="true"><use href="#compass"/></svg></div>
+        <h3>Salidas de buceo</h3>
+        <p>Si ya tienes titulación, acompáñanos a explorar los fondos de La Herradura. Organizamos salidas desde tierra o embarcación.</p>
+        <a href="https://wa.me/34658504324?text=Hola%2C%20tengo%20titulaci%C3%B3n%20de%20buceo%20y%20me%20gustar%C3%ADa%20consultar%20por%20las%20pr%C3%B3ximas%20salidas.">Consultar salidas <svg aria-hidden="true"><use href="#arrow"/></svg></a>
+      </article>
+    </div>
+  </section>
+  <section class="section wrap training" id="formacion" aria-labelledby="training-title">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow"><span class="dot"></span> FEDAS–CMAS</p>
+        <h2 id="training-title">Plan de formación</h2>
+      </div>
+      <a class="text-link" href="#calendario">Ver el calendario de cursos <svg aria-hidden="true"><use href="#arrow"/></svg></a>
+    </div>
+    <div class="reference-grid">
+      <article class="reference-card">
+        <p class="eyebrow">B1E · Iniciación</p>
+        <h3>Buceador 1 estrella</h3>
+        <p>Titulación de iniciación al buceo deportivo con certificado internacional CMAS. Incluye formación teórica y prácticas en el agua.</p>
+        <p><strong>Edad mínima:</strong> 14 años. El programa Buceador Junior tiene su propia titulación y admite participantes desde los 12 años.</p>
+        <p><strong>Atribuciones del B1E:</strong> hasta 25 m sin descompresión tras completar las 20 inmersiones de prácticas registradas, dentro de los límites aplicables por edad y normativa.</p>
+      </article>
+      <article class="reference-card">
+        <p class="eyebrow">B2E · Avanzado</p>
+        <h3>Buceador 2 estrellas</h3>
+        <p>Formación avanzada para realizar y liderar inmersiones en grupo dentro de los límites de titulación y edad de sus integrantes.</p>
+        <p><strong>Acceso:</strong> desde los 16 años, con B1E, 20 inmersiones acreditadas y la especialidad de soporte vital básico.</p>
+      </article>
+      <article class="reference-card">
+        <p class="eyebrow">B3E · Perfeccionamiento</p>
+        <h3>Buceador 3 estrellas</h3>
+        <p>Formación para planificar, organizar y dirigir inmersiones, incluidas las que requieren descompresión dentro de las atribuciones de la titulación. También prepara para colaborar como buceador de seguridad en cursos FEDAS.</p>
+        <p><strong>Acceso:</strong> desde los 16 años, con B2E, 50 inmersiones registradas y la especialidad de administración de oxígeno.</p>
+      </article>
+    </div>
+    <div class="training-options">
+      <details>
+        <summary>Especialidades por nivel</summary>
+        <dl>
+          <dt>B1E</dt>
+          <dd>Navegación subacuática, soporte vital básico, administración de oxígeno normobárico, nitrox, buceo nocturno, traje seco, montaje lateral, buceo adaptado, operación de compresores, IntroTec e interpretación del patrimonio natural y cultural.</dd>
+          <dt>B2E</dt>
+          <dd>Salvamento y rescate, pecios, cuevas, buceo bajo hielo, nitrox descompresivo y fundamentos del buceo técnico.</dd>
+          <dt>B3E</dt>
+          <dd>Nitrox técnico, trimix normobárico y trimix avanzado.</dd>
+        </dl>
+      </details>
+      <details>
+        <summary>Descubrimiento, buceo junior y formación de monitores</summary>
+        <p>El programa incluye bautismos, actividades infantiles, buceo con tubo y opciones de buceo junior y condicionado. Para quienes quieren enseñar o guiar grupos, el plan incluye formación de guía de grupo, monitor de buceo con tubo e instructor nacional.</p>
+        <p><a class="text-link" href="#contacto">Consultar requisitos y disponibilidad <svg aria-hidden="true"><use href="#arrow"/></svg></a></p>
+      </details>
+    </div>
+  </section>
+  <section class="calendar" id="calendario" aria-labelledby="calendar-title">
+    <div class="wrap">
+      <div class="calendar-heading">
+        <div>
+          <p class="eyebrow"><span class="dot"></span> Formación</p>
+          <h2 id="calendar-title">Calendario anual de cursos</h2>
+          <p>Consulta la semana de curso de cada mes. Las fechas van de lunes a domingo.</p>
+        </div>
+        <div class="calendar-year" aria-label="Elegir año">
+          <button type="button" id="calendar-prev" aria-label="Año anterior" disabled>‹</button>
+          <span id="calendar-year" aria-live="polite"></span>
+          <button type="button" id="calendar-next" aria-label="Año siguiente" disabled>›</button>
+        </div>
+      </div>
+      <div class="calendar-meta">
+        <span class="calendar-legend"><span aria-hidden="true"></span> Semana de curso</span>
+        <p id="calendar-status" role="status"></p>
+        <button type="button" class="calendar-retry" id="calendar-retry" hidden>Volver a cargar</button>
+      </div>
+      <div id="calendar-months" class="calendar-months" aria-busy="true"></div>
+      <noscript>Activa JavaScript para consultar las semanas de curso.</noscript>
+    </div>
+  </section>
+  <section class="destination" id="la-herradura" aria-labelledby="destination-title">
+    <div class="wrap destination-grid">
+      <figure>
+        <img src="assets/la-herradura.jpg" alt="Vista aérea de la bahía de La Herradura y su entorno" width="1440" height="960" loading="lazy">
+        <figcaption><a href="https://commons.wikimedia.org/wiki/File:La_Herradura_aerial.jpg">Foto de Kallerna</a> · <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a> · Redimensionada y recortada</figcaption>
+      </figure>
+      <div class="destination-copy">
+        <p class="eyebrow"><span class="dot"></span> Costa Tropical · Granada</p>
+        <h2 id="destination-title">Buceamos en<br>La Herradura</h2>
+        <p>Entre acantilados y fondos rocosos del Mediterráneo hacemos los bautismos, las prácticas en mar y las salidas para buceadores titulados.</p>
+        <p>Contamos con el apoyo del Centro de Buceo La Herradura, en el puerto deportivo de Marina del Este, en Almuñécar.</p>
+        <a class="button outline" href="https://www.google.com/maps/search/?api=1&amp;query=Puerto%20Deportivo%20Marina%20del%20Este%2C%20La%20Herradura">Ver Marina del Este <svg aria-hidden="true"><use href="#external"/></svg></a>
+      </div>
+    </div>
+  </section>
+  <section class="section gallery" id="galeria" aria-labelledby="gallery-title">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow"><span class="dot"></span> Fotos de actividades</p>
+          <h2 id="gallery-title">Galería</h2>
+        </div>
+        <p>Álbumes de cursos, bautismos y salidas de Buceo Arquímedes.</p>
+      </div>
+      <p id="gallery-status" role="status">Cargando álbumes…</p>
+      <button id="gallery-retry" class="gallery-retry" type="button" hidden>Volver a cargar</button>
+      <div id="gallery-albums" class="gallery-albums"></div>
+      <noscript>Activa JavaScript para ver los álbumes.</noscript>
+      <dialog class="gallery-viewer" id="gallery-viewer" aria-labelledby="gallery-viewer-title">
+        <div class="gallery-viewer-head">
+          <h3 id="gallery-viewer-title"></h3>
+          <form method="dialog"><button class="button outline" type="submit">Cerrar</button></form>
+        </div>
+        <img id="gallery-viewer-image" alt="">
+        <div class="gallery-viewer-controls">
+          <button id="gallery-previous" class="button outline" type="button">Anterior</button>
+          <p id="gallery-viewer-count" aria-live="polite"></p>
+          <button id="gallery-next" class="button outline" type="button">Siguiente</button>
+        </div>
+      </dialog>
+    </div>
+  </section>
+  <section class="section wrap school" id="escuela" aria-labelledby="school-title">
+    <div>
+      <p class="eyebrow"><span class="dot"></span> La escuela</p>
+      <h2 id="school-title">Buceo Arquímedes</h2>
+      <p>Nacimos en Sevilla en 1992 como club deportivo. En 2027 se cumplen 35 años desde la fundación de Buceo Arquímedes.</p>
+      <p>El club dio sus primeros pasos con el apoyo de Celia Nebot, al frente de Náutica Sun Sail, y de Manolo Manzanares, cuya experiencia ayudó a dirigir los primeros cursos de Buceador 1 estrella.</p>
+      <p>Desde entonces, hemos acompañado a miles de personas, desde sus primeras inmersiones hasta las especialidades avanzadas. Seguimos formando a buceadores con atención a la seguridad, al compañerismo y al respeto por el medio marino.</p>
+      <a class="text-link" href="#equipo">Conoce al equipo <svg aria-hidden="true"><use href="#arrow"/></svg></a>
+    </div>
+    <aside class="director" aria-label="Dirección de la escuela">
+      <p class="eyebrow">Dirección</p>
+      <h3>Mario Arcos Fernández</h3>
+      <p>Instructor FEDAS–CMAS, técnico en Operaciones Subacuáticas e Hiperbáricas y patrón de altura de la Marina Mercante.</p>
+    </aside>
+  </section>
+  <section class="section wrap team" id="equipo" aria-labelledby="team-title">
+    <div class="section-head"><h2 id="team-title">El equipo</h2></div>
+    <div class="reference-grid">
+      <article class="reference-card">
+        <h3>Instrucción</h3>
+        <dl>
+          <dt>José Vicente Leal Mantos</dt><dd>Instructor FEDAS–CMAS · Viajes</dd>
+          <dt>José Juan García Guisado</dt><dd>Instructor FEDAS–CMAS · Área técnica</dd>
+          <dt>Marta Leal</dt><dd>Instructora FEDAS–CMAS y bióloga</dd>
+        </dl>
+      </article>
+      <article class="reference-card">
+        <h3>Administración</h3>
+        <dl>
+          <dt>Natalia Martínez Sanguino</dt><dd>Buceadora FEDAS–CMAS de 3 estrellas</dd>
+          <dt>Verónica Morón López</dt><dd>Buceadora FEDAS–CMAS de 2 estrellas</dd>
+        </dl>
+      </article>
+      <article class="reference-card">
+        <h3>Imagen y redes</h3>
+        <dl>
+          <dt>Javier Martínez González</dt><dd>Guía de grupo FEDAS–CMAS · Vídeo y fotografía</dd>
+          <dt>Manuel Jesús Mejías Vallejo</dt><dd>Buceador FEDAS–CMAS de 1 estrella · Redes sociales</dd>
+        </dl>
+      </article>
+    </div>
+  </section>
+  <section class="contact" id="contacto" aria-labelledby="contact-title">
+    <div class="wrap contact-inner">
+      <div>
+        <p class="eyebrow"><span class="dot"></span> Contacto</p>
+        <h2 id="contact-title">Planea tu próxima inmersión</h2>
+        <p>Escríbenos o llama a administración para consultar fechas, requisitos y disponibilidad.</p>
+      </div>
+      <div class="contact-actions">
+        <a class="button dark" href="https://wa.me/34658504324">Escribir por WhatsApp <svg aria-hidden="true"><use href="#external"/></svg></a>
+        <a class="contact-detail" href="tel:+34658504324">658 50 43 24</a>
+        <a class="contact-detail" href="mailto:buceoarquimedes.adm@gmail.com">buceoarquimedes.adm@gmail.com</a>
+      </div>
+    </div>
+  </section>
+  </main>
+  <footer>
+    <div class="wrap footer-inner">
+      <a class="brand" href="#inicio" aria-label="Buceo Arquímedes, volver al inicio"><svg aria-hidden="true"><use href="#mark"/></svg><span><small>BUCEO</small><strong>ARQUÍMEDES</strong></span></a>
+      <p>Escuela de buceo FEDAS–CMAS · Sevilla</p>
+      <a href="#contacto">Contacto de la escuela <svg aria-hidden="true"><use href="#arrow"/></svg></a>
+    </div>
+  </footer>
+</body>
 </html>
